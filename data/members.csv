@@ -1,0 +1,9 @@
+member_id,first_name,last_name,email,address,phone,date_registered
+1,John,Smith,john.smith@email.com,100 Maple Street,555-0101,2024-01-15
+2,Sarah,Johnson,sarah.j@email.com,200 Pine Avenue,555-0102,2024-02-20
+55,Isabella,Brown,isabella.brown.9b4e89@example.com,677 Seed St,555-8314,2025-12-05
+56,Ava,Taylor,ava.taylor.7d3a77@example.com,119 Seed St,555-9894,2025-12-05
+57,Isabella,Brown,isabella.brown.e46f5d@example.com,450 Seed St,555-7160,2025-12-05
+58,Oliver,Brown,oliver.brown.09b4e2@example.com,976 Seed St,555-9497,2025-12-05
+59,Noah,Anderson,noah.anderson.c46842@example.com,26 Seed St,555-9377,2025-12-05
+60,Isabella,Lee,isabella.lee.880a03@example.com,36 Seed St,555-1164,2025-12-05

@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            color: #333;
+            font-size: 2.5em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #e082ea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f093fb;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5568d3;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .tab-btn.active {
+            background: #001f5e;
+            color: white;
+        }
+
+        /* Header nav active state (dashboard/manage/seed) */
+        .nav-buttons .btn-primary.active,
+        .nav-buttons .btn-secondary.active {
+            background: #001f5e;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card {
+            text-align: center;
+            border-left: 5px solid #667eea;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 450px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #ffffff 100%);
+            padding: 20px 20px 40px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+            .chart-container h3 {
+                color: #fff;
+                font-size: 1.25rem;
+                margin-bottom: 12px;
+            }
+
+        .form-section {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="number"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-available {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+        .badge-on-loan {
+            background: #ffccbc;
+            color: #d84315;
+        }
+
+        .badge-reserved {
+            background: #ffe0b2;
+            color: #e65100;
+        }
+
+        .search-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .search-bar input {
+            max-width: 500px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #1565c0;
+        }
+
+        .success-message {
+            background: #c8e6c9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Library Management System</h1>
+            <div class="nav-buttons">
+                <button class="btn-primary" data-target="dashboard" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="btn-secondary" data-target="manage" onclick="switchTab('manage')">Manage</button>
+                <button class="btn-secondary" data-target="seed" onclick="switchTab('seed'); seedData();">Seed Data</button>
+            </div>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="card stat-card">
+                    <div class="stat-label">Total Books</div>
+                    <div class="stat-number" id="totalBooks">0</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Available Copies</div>
+                    <div class="stat-number" id="availableCopies">0</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Books on Loan</div>
+                    <div class="stat-number" id="booksOnLoan">0</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Reserved Copies</div>
+                    <div class="stat-number" id="reservedCopies">0</div>
+                </div>
+                <div class="card stat-card">
+                    <div class="stat-label">Active Members</div>
+                    <div class="stat-number" id="activeMembers">0</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px; color: #333;">Book Status Distribution</h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px; color: #333;">Loans Trend</h3>
+                <canvas id="loansChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3 style="margin-bottom: 20px; color: #333;">Top Genres</h3>
+                <canvas id="genreChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Management Tab -->
+        <div id="manage" class="tab-content">
+            <div class="tabs" style="margin-left: 0;">
+                <button class="tab-btn active" data-target="books" onclick="switchSubTab('books')">Books</button>
+                <button class="tab-btn" data-target="members" onclick="switchSubTab('members')">Members</button>
+                <button class="tab-btn" data-target="loans" onclick="switchSubTab('loans')">Loans</button>
+                <button class="tab-btn" data-target="copies" onclick="switchSubTab('copies')">Copies</button>
+                <button class="tab-btn" data-target="branches" onclick="switchSubTab('branches')">Branches</button>
+                <button class="tab-btn" data-target="publishers" onclick="switchSubTab('publishers')">Publishers</button>
+                <button class="tab-btn" data-target="authors" onclick="switchSubTab('authors')">Authors</button>
+            </div>
+
+            <!-- Books Management -->
+            <div id="books" class="tab-content active">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add New Book</h2>
+                    <form onsubmit="submitBook(event)">
+                            <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                                <button type="button" class="btn-delete" onclick="deleteSelected('books')">Delete Selected</button>
+                            </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" id="bookTitle" required>
+                            </div>
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="text" id="bookISBN" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Genre</label>
+                                <input type="text" id="bookGenre" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Publisher ID</label>
+                                <input type="number" id="publisherID" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Publication Year</label>
+                                <input type="number" id="pubYear" min="1900" max="2100" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Book</button>
+                    </form>
+                </div>
+
+                <div class="search-bar" style="margin-top: 30px;">
+                    <h2 style="margin-bottom: 15px; color: #333;">Books List</h2>
+                    <input type="text" placeholder="Search books by title or ISBN..." id="bookSearch" onkeyup="filterTable('booksTable', 'bookSearch')">
+                </div>
+
+                <div class="table-responsive">
+                    <table id="booksTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllBooks" onchange="toggleSelectAll('books', this.checked)"></th>
+                                <th>ISBN</th>
+                                <th>Title</th>
+                                <th>Genre</th>
+                                <th>Publisher ID</th>
+                                <th>Year</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Members Management -->
+            <div id="members" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add New Member</h2>
+                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                            <button type="button" class="btn-delete" onclick="deleteSelected('members')">Delete Selected</button>
+                        </div>
+                        <form onsubmit="submitMember(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="memberFirst" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="memberLast" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="memberEmail" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" id="memberAddress" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="memberPhone" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Member</button>
+                    </form>
+                </div>
+
+                <div class="search-bar" style="margin-top: 30px;">
+                    <h2 style="margin-bottom: 15px; color: #333;">Members List</h2>
+                    <input type="text" placeholder="Search members..." id="memberSearch" onkeyup="filterTable('membersTable', 'memberSearch')">
+                </div>
+
+                <div class="table-responsive">
+                    <table id="membersTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllMembers" onchange="toggleSelectAll('members', this.checked)"></th>
+                                <th>Member ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Address</th>
+                                <th>Registered</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Loans Management -->
+            <div id="loans" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Create New Loan</h2>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <button type="button" class="btn-delete" onclick="deleteSelected('loans')">Delete Selected</button>
+                    </div>
+                    <form onsubmit="submitLoan(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Copy ID</label>
+                                <input type="number" id="copyID" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Member ID</label>
+                                <input type="number" id="memberID" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Issue Date</label>
+                                <input type="date" id="issueDate" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Due Date</label>
+                                <input type="date" id="dueDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Fine Amount</label>
+                                <input type="number" id="fineAmount" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Create Loan</button>
+                    </form>
+                </div>
+
+                <div class="search-bar" style="margin-top: 30px;">
+                    <h2 style="margin-bottom: 15px; color: #333;">Active Loans</h2>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="loansTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllLoans" onchange="toggleSelectAll('loans', this.checked)"></th>
+                                <th>Loan ID</th>
+                                <th>Copy ID</th>
+                                <th>Member ID</th>
+                                <th>Issue Date</th>
+                                <th>Due Date</th>
+                                <th>Return Date</th>
+                                <th>Fine Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loansBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Copies Management -->
+            <div id="copies" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add Book Copy</h2>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <button type="button" class="btn-delete" onclick="deleteSelected('copies')">Delete Selected</button>
+                    </div>
+                    <form onsubmit="submitCopy(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>ISBN</label>
+                                <input type="number" id="copyIsbn" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Branch ID</label>
+                                <input type="number" id="copyBranchId" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="copyStatus">
+                                    <option value="Available">Available</option>
+                                    <option value="On Loan">On Loan</option>
+                                    <option value="Reserved">Reserved</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Copy</button>
+                    </form>
+                </div>
+
+                <div class="search-bar" style="margin-top: 30px;">
+                    <h2 style="margin-bottom: 15px; color: #333;">Book Copies</h2>
+                    <input type="text" placeholder="Search copies..." id="copiesSearch" onkeyup="filterTable('copiesTable', 'copiesSearch')">
+                </div>
+
+                <div class="table-responsive">
+                    <table id="copiesTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllCopies" onchange="toggleSelectAll('copies', this.checked)"></th>
+                                <th>Copy ID</th>
+                                <th>ISBN</th>
+                                <th>Branch ID</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="copiesBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Branches Management -->
+            <div id="branches" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add New Branch</h2>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <button type="button" class="btn-delete" onclick="deleteSelected('branches')">Delete Selected</button>
+                    </div>
+                    <form onsubmit="submitBranch(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Branch Name</label>
+                                <input type="text" id="branchName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" id="branchLocation" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Branch</button>
+                    </form>
+                </div>
+
+                <div class="table-responsive" style="margin-top: 30px;">
+                    <table id="branchesTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllBranches" onchange="toggleSelectAll('branches', this.checked)"></th>
+                                <th>Branch ID</th>
+                                <th>Name</th>
+                                <th>Location</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchesBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Publishers Management -->
+            <div id="publishers" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add New Publisher</h2>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <button type="button" class="btn-delete" onclick="deleteSelected('publishers')">Delete Selected</button>
+                    </div>
+                    <form onsubmit="submitPublisher(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Publisher Name</label>
+                                <input type="text" id="pubName" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" id="pubAddress" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="pubPhone" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Publisher</button>
+                    </form>
+                </div>
+
+                <div class="table-responsive" style="margin-top: 30px;">
+                    <table id="publishersTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllPublishers" onchange="toggleSelectAll('publishers', this.checked)"></th>
+                                <th>Publisher ID</th>
+                                <th>Name</th>
+                                <th>Address</th>
+                                <th>Phone</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="publishersBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Authors Management -->
+            <div id="authors" class="tab-content">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #333;">Add New Author</h2>
+                    <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px;">
+                        <button type="button" class="btn-delete" onclick="deleteSelected('authors')">Delete Selected</button>
+                    </div>
+                    <form onsubmit="submitAuthor(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" id="authorFirst" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" id="authorLast" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-success">Add Author</button>
+                    </form>
+                </div>
+
+                <div class="table-responsive" style="margin-top: 30px;">
+                    <table id="authorsTable">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAllAuthors" onchange="toggleSelectAll('authors', this.checked)"></th>
+                                <th>Author ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="authorsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let statusChart, loansChart, genreChart;
+
+
+function switchTab(tabName) {
+    // activate main tab content only if it exists (seed uses header active color without a content pane)
+    const mainTab = document.getElementById(tabName);
+    if (mainTab) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        mainTab.classList.add('active');
+    }
+
+    // toggle header nav active state
+    const navBtns = document.querySelectorAll('.nav-buttons button');
+    navBtns.forEach(btn => {
+        if (btn.dataset && btn.dataset.target === tabName) btn.classList.add('active'); else btn.classList.remove('active');
+    });
+
+    // If dashboard selected, ensure charts initialize
+    if (tabName === 'dashboard') {
+        setTimeout(initCharts, 100);
+    }
+
+    // If Manage selected, make all sub-tab buttons visually white (remove active)
+    if (tabName === 'manage') {
+        document.querySelectorAll('.tabs .tab-btn').forEach(b => b.classList.remove('active'));
+    }
+}
+
+function switchSubTab(tabName) {
+    document.querySelectorAll('#manage .tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.getElementById(tabName).classList.add('active');
+    // Update active class on tab buttons
+    const tabButtons = document.querySelectorAll('.tabs .tab-btn');
+    tabButtons.forEach(btn => {
+        if (btn.dataset && btn.dataset.target === tabName) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
+function initCharts() {
+    const statusCtx = document.getElementById('statusChart')?.getContext('2d');
+    const loansCtx = document.getElementById('loansChart')?.getContext('2d');
+    const genreCtx = document.getElementById('genreChart')?.getContext('2d');
+
+    if (statusCtx) {
+        statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Available', 'On Loan', 'Reserved'],
+                datasets: [{
+                    data: [45, 35, 20],
+                    backgroundColor: ['#4caf50', '#ff9800', '#f44336'],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (loansCtx) {
+        loansChart = new Chart(loansCtx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+                datasets: [{
+                    label: 'New Loans',
+                    data: [12, 19, 15, 25, 22, 30],
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: '#000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 13
+                            },
+                            backgroundColor: '#fff',
+                            padding: 8
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 13
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (genreCtx) {
+        genreChart = new Chart(genreCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Fiction', 'Non-Fiction', 'Science', 'History', 'Romance', 'Mystery'],
+                datasets: [{
+                    label: 'Number of Books',
+                    data: [25, 20, 15, 18, 22, 17],
+                    backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#43e97b']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                indexAxis: 'x',
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#000',
+                            font: {
+                                size: 14
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 13
+                            },
+                            backgroundColor: '#fff',
+                            padding: 8
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#000',
+                            font: {
+                                size: 13
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
+
+function loadDashboard() {
+    fetch('http://localhost:5000/api/dashboard')
+        .then(res => res.json())
+        .then(data => {
+            if (!data) return;
+            const counts = data.counts || {};
+            document.getElementById('totalBooks').textContent = counts.total_books || 0;
+            document.getElementById('availableCopies').textContent = counts.available_copies || 0;
+            document.getElementById('booksOnLoan').textContent = counts.books_on_loan || 0;
+            const reservedEl = document.getElementById('reservedCopies');
+            if (reservedEl) reservedEl.textContent = counts.reserved_copies || 0;
+            document.getElementById('activeMembers').textContent = counts.active_members || 0;
+
+            // Update status chart
+            if (statusChart && data.status_distribution) {
+                const sd = data.status_distribution;
+                const available = sd['Available'] || 0;
+                const onLoan = sd['On Loan'] || sd['OnLoan'] || 0;
+                const reserved = sd['Reserved'] || 0;
+                statusChart.data.datasets[0].data = [available, onLoan, reserved];
+                statusChart.update();
+            }
+
+            // Update loans trend
+            if (loansChart && data.loans_trend) {
+                loansChart.data.labels = data.loans_trend.labels || loansChart.data.labels;
+                loansChart.data.datasets[0].data = data.loans_trend.counts || loansChart.data.datasets[0].data;
+                loansChart.update();
+            }
+
+            // Update genre chart
+            if (genreChart && data.top_genres) {
+                genreChart.data.labels = data.top_genres.labels || genreChart.data.labels;
+                genreChart.data.datasets[0].data = data.top_genres.counts || genreChart.data.datasets[0].data;
+                genreChart.update();
+            }
+        })
+        .catch(err => console.error('Error loading dashboard:', err));
+}
+
+function filterTable(tableId, searchId) {
+    const input = document.getElementById(searchId);
+    if (!input) return;
+    const searchValue = input.value.trim().toLowerCase();
+    const table = document.getElementById(tableId);
+    if (!table) return;
+    const tbody = table.tBodies && table.tBodies[0];
+    if (!tbody) return;
+    const rows = Array.from(tbody.rows);
+
+    rows.forEach(row => {
+        const text = (row.textContent || '').toLowerCase();
+        // show all rows when search empty
+        row.style.display = searchValue === '' ? '' : (text.includes(searchValue) ? '' : 'none');
+    });
+}
+
+// تحميل البيانات عند فتح الصفحة
+    window.addEventListener('load', () => {
+    loadBooks();
+    loadMembers();
+    loadLoans();
+    loadBranches();
+    loadPublishers();
+    loadAuthors();
+    initCharts();
+    loadDashboard();
+});
+
+// ==================== BOOKS ====================
+function loadBooks() {
+    fetch('http://localhost:5000/api/books')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('booksBody');
+            tbody.innerHTML = '';
+            data.forEach(book => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-books" data-id="${book.isbn}"></td>
+                        <td>${book.isbn}</td>
+                        <td>${book.title}</td>
+                        <td>${book.genre}</td>
+                        <td>${book.publisher_id}</td>
+                        <td>${book.publication_year}</td>
+                        <td><button class="btn-edit" onclick="editBook(${book.isbn})">Edit</button> <button class="btn-delete" onclick="deleteBook(${book.isbn})">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('Error loading books:', err));
+}
+
+function submitBook(e) {
+    e.preventDefault();
+    const bookData = {
+        title: document.getElementById('bookTitle').value,
+        isbn: document.getElementById('bookISBN').value,
+        genre: document.getElementById('bookGenre').value,
+        publisher_id: document.getElementById('publisherID').value,
+        publication_year: document.getElementById('pubYear').value
+    };
+    
+    fetch('http://localhost:5000/api/books', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(bookData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'تم الإضافة');
+        e.target.reset();
+        loadBooks();
+        loadDashboard();
+    })
+    .catch(err => console.error('خطأ:', err));
+}
+
+// ==================== MEMBERS ====================
+function loadMembers() {
+    fetch('http://localhost:5000/api/members')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('membersBody');
+            tbody.innerHTML = '';
+            data.forEach(member => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-members" data-id="${member.member_id}"></td>
+                        <td>${member.member_id}</td>
+                        <td>${member.first_name} ${member.last_name}</td>
+                        <td>${member.email}</td>
+                        <td>${member.phone}</td>
+                        <td>${member.address}</td>
+                        <td>${member.date_registered || '-'}</td>
+                        <td><button class="btn-edit" onclick="editMember(${member.member_id})">Edit</button> <button class="btn-delete" onclick="deleteMember(${member.member_id})">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('Error loading members:', err));
+}
+
+function submitMember(e) {
+    e.preventDefault();
+    const memberData = {
+        first_name: document.getElementById('memberFirst').value,
+        last_name: document.getElementById('memberLast').value,
+        email: document.getElementById('memberEmail').value,
+        address: document.getElementById('memberAddress').value,
+        phone: document.getElementById('memberPhone').value
+    };
+    
+    fetch('http://localhost:5000/api/members', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(memberData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'تم الإضافة');
+        e.target.reset();
+        loadMembers();
+        loadDashboard();
+    })
+    .catch(err => console.error('خطأ:', err));
+}
+
+// ==================== LOANS ====================
+function loadLoans() {
+    fetch('http://localhost:5000/api/loans')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('loansBody');
+            tbody.innerHTML = '';
+            data.forEach(loan => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-loans" data-id="${loan.loan_id}"></td>
+                        <td>${loan.loan_id}</td>
+                        <td>${loan.copy_id}</td>
+                        <td>${loan.member_id}</td>
+                        <td>${loan.issue_date}</td>
+                        <td>${loan.due_date}</td>
+                        <td>${loan.return_date || '-'}</td>
+                        <td>${loan.fine_amount || '-'}</td>
+                        <td><button class="btn-edit" onclick="editLoan(${loan.loan_id})">Edit</button> <button class="btn-delete" onclick="deleteLoan(${loan.loan_id})">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('خطأ في تحميل القروض:', err));
+}
+
+function submitLoan(e) {
+    e.preventDefault();
+    const copyID = document.getElementById('copyID').value;
+    const memberID = document.getElementById('memberID').value;
+    const issueDate = document.getElementById('issueDate').value;
+    const dueDate = document.getElementById('dueDate').value;
+    
+    if (!copyID || !memberID || !issueDate || !dueDate) {
+        alert('Please fill in all required fields');
+        return;
+    }
+    
+    const loanData = {
+        copy_id: parseInt(copyID),
+        member_id: parseInt(memberID),
+        issue_date: issueDate,
+        due_date: dueDate
+    };
+    const fineInput = document.getElementById('fineAmount');
+    if (fineInput && fineInput.value) loanData.fine_amount = parseFloat(fineInput.value);
+    
+    fetch('http://localhost:5000/api/loans', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(loanData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'Loan added');
+        e.target.reset();
+        loadLoans();
+        loadCopies();
+        loadDashboard();
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        alert('Error creating loan: ' + err);
+    });
+}
+
+// ==================== COPIES ====================
+function loadCopies() {
+    fetch('http://localhost:5000/api/copies')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('copiesBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            data.forEach(copy => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-copies" data-id="${copy.copy_id}"></td>
+                        <td>${copy.copy_id}</td>
+                        <td>${copy.isbn}</td>
+                        <td>${copy.branch_id}</td>
+                        <td>${copy.status}</td>
+                        <td><button class="btn-edit" onclick="editCopy(${copy.copy_id})">Edit</button> <button class="btn-delete" onclick="deleteCopy(${copy.copy_id})">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('Error loading copies:', err));
+}
+
+function submitCopy(e) {
+    e.preventDefault();
+    const copyData = {
+        isbn: document.getElementById('copyIsbn').value,
+        branch_id: document.getElementById('copyBranchId').value,
+        status: document.getElementById('copyStatus').value
+    };
+
+    fetch('http://localhost:5000/api/copies', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(copyData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'Copy added');
+        e.target.reset();
+        loadCopies();
+        loadDashboard();
+    })
+    .catch(err => console.error('Error adding copy:', err));
+}
+
+// ==================== EDIT / DELETE ACTIONS ====================
+function editBook(isbn) {
+    const title = prompt('New title:');
+    if (title === null) return;
+    const genre = prompt('New genre:');
+    if (genre === null) return;
+    const publisher_id = prompt('New publisher ID:');
+    if (publisher_id === null) return;
+    const publication_year = prompt('New publication year:');
+    if (publication_year === null) return;
+
+    fetch(`http://localhost:5000/api/books/${isbn}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({title, genre, publisher_id, publication_year})
+    }).then(res => res.json()).then(() => { loadBooks(); loadDashboard(); }).catch(err => console.error(err));
+}
+
+function deleteBook(isbn) {
+    if (!confirm('Delete book '+isbn+'?')) return;
+    fetch(`http://localhost:5000/api/books/${isbn}`, {method: 'DELETE'})
+        .then(res => res.json()).then(() => { loadBooks(); loadDashboard(); }).catch(err => console.error(err));
+}
+
+function editMember(id) {
+    const first_name = prompt('First name:'); if (first_name===null) return;
+    const last_name = prompt('Last name:'); if (last_name===null) return;
+    const email = prompt('Email:'); if (email===null) return;
+    const address = prompt('Address:'); if (address===null) return;
+    const phone = prompt('Phone:'); if (phone===null) return;
+    fetch(`http://localhost:5000/api/members/${id}`, {
+        method: 'PUT', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({first_name,last_name,email,address,phone})
+    }).then(()=>{loadMembers();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function deleteMember(id) {
+    if(!confirm('Delete member '+id+'?')) return;
+    fetch(`http://localhost:5000/api/members/${id}`, {method:'DELETE'})
+        .then(()=>{loadMembers();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function editLoan(id) {
+    const copy_id = prompt('Copy ID:'); if (copy_id===null) return;
+    const member_id = prompt('Member ID:'); if (member_id===null) return;
+    const issue_date = prompt('Issue date (YYYY-MM-DD):'); if (issue_date===null) return;
+    const due_date = prompt('Due date (YYYY-MM-DD):'); if (due_date===null) return;
+    const return_date = prompt('Return date (YYYY-MM-DD) or leave empty:');
+    const fine_amount = prompt('Fine amount or leave empty:');
+    fetch(`http://localhost:5000/api/loans/${id}`, {
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({copy_id,member_id,issue_date,due_date,return_date: return_date||null, fine_amount: fine_amount||null})
+    }).then(()=>{loadLoans();loadCopies();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function deleteLoan(id) {
+    if(!confirm('Delete loan '+id+'?')) return;
+    fetch(`http://localhost:5000/api/loans/${id}`, {method:'DELETE'})
+        .then(()=>{loadLoans();loadCopies();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function editCopy(id) {
+    const isbn = prompt('ISBN:'); if (isbn===null) return;
+    const branch_id = prompt('Branch ID:'); if (branch_id===null) return;
+    const status = prompt('Status (Available/On Loan/Reserved):'); if (status===null) return;
+    fetch(`http://localhost:5000/api/copies/${id}`, {
+        method:'PUT', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({isbn,branch_id,status})
+    }).then(()=>{loadCopies();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function deleteCopy(id) {
+    if(!confirm('Delete copy '+id+'?')) return;
+    fetch(`http://localhost:5000/api/copies/${id}`, {method:'DELETE'})
+        .then(()=>{loadCopies();loadDashboard();}).catch(err=>console.error(err));
+}
+
+function toggleSelectAll(entity, checked) {
+    const boxes = document.querySelectorAll(`.select-${entity}`);
+    boxes.forEach(b => b.checked = checked);
+}
+
+function deleteSelected(entity) {
+    const boxes = Array.from(document.querySelectorAll(`.select-${entity}:checked`));
+    if (!boxes.length) { alert('No rows selected'); return; }
+    if (!confirm(`Delete ${boxes.length} selected ${entity}?`)) return;
+    const ids = boxes.map(b => b.getAttribute('data-id'));
+    fetch(`http://localhost:5000/api/${entity}/bulk_delete`, {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ids})
+    }).then(res => res.json()).then(res => {
+        if (res.error) { alert('Error: ' + res.error); console.error(res); return; }
+        // refresh lists
+        loadBooks(); loadMembers(); loadLoans(); loadCopies(); loadBranches(); loadPublishers(); loadAuthors(); loadDashboard();
+    }).catch(err => { console.error(err); alert('Delete failed'); });
+}
+
+// ==================== BRANCHES ====================
+function loadBranches() {
+    fetch('http://localhost:5000/api/branches')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('branchesBody');
+            tbody.innerHTML = '';
+            data.forEach(branch => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-branches" data-id="${branch.branch_id}"></td>
+                        <td>${branch.branch_id}</td>
+                        <td>${branch.name}</td>
+                        <td>${branch.location}</td>
+                        <td><button class="btn-edit">Edit</button> <button class="btn-delete">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('Error loading branches:', err));
+}
+
+function submitBranch(e) {
+    e.preventDefault();
+    const branchData = {
+        branch_name: document.getElementById('branchName').value,
+        location: document.getElementById('branchLocation').value
+    };
+    
+    fetch('http://localhost:5000/api/branches', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(branchData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'تم الإضافة');
+        e.target.reset();
+        loadBranches();
+    })
+    .catch(err => console.error('خطأ:', err));
+}
+
+// ==================== PUBLISHERS ====================
+function loadPublishers() {
+    fetch('http://localhost:5000/api/publishers')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('publishersBody');
+            tbody.innerHTML = '';
+            data.forEach(pub => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-publishers" data-id="${pub.publisher_id}"></td>
+                        <td>${pub.publisher_id}</td>
+                        <td>${pub.name}</td>
+                        <td>${pub.address}</td>
+                        <td>${pub.phone}</td>
+                        <td><button class="btn-edit">Edit</button> <button class="btn-delete">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('Error loading publishers:', err));
+}
+
+function submitPublisher(e) {
+    e.preventDefault();
+    const pubData = {
+        publisher_name: document.getElementById('pubName').value,
+        address: document.getElementById('pubAddress').value,
+        phone: document.getElementById('pubPhone').value
+    };
+    
+    fetch('http://localhost:5000/api/publishers', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(pubData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'تم الإضافة');
+        e.target.reset();
+        loadPublishers();
+    })
+    .catch(err => console.error('خطأ:', err));
+}
+
+// ==================== AUTHORS ====================
+function loadAuthors() {
+    fetch('http://localhost:5000/api/authors')
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById('authorsBody');
+            tbody.innerHTML = '';
+            data.forEach(author => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><input type="checkbox" class="select-authors" data-id="${author.author_id}"></td>
+                        <td>${author.author_id}</td>
+                        <td>${author.first_name}</td>
+                        <td>${author.last_name}</td>
+                        <td><button class="btn-edit">Edit</button> <button class="btn-delete">Delete</button></td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(err => console.error('خطأ في تحميل المؤلفين:', err));
+}
+
+function submitAuthor(e) {
+    e.preventDefault();
+    const authorData = {
+        first_name: document.getElementById('authorFirst').value,
+        last_name: document.getElementById('authorLast').value
+    };
+    
+    fetch('http://localhost:5000/api/authors', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(authorData)
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message || 'تم الإضافة');
+        e.target.reset();
+        loadAuthors();
+    })
+    .catch(err => console.error('خطأ:', err));
+}
+
+function seedData() {
+    if (!confirm('This will insert sample data into all main tables. Continue?')) return;
+    fetch('http://localhost:5000/api/seed', {method: 'POST'})
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                alert('Seed failed: ' + data.error);
+                console.error(data);
+                return;
+            }
+            alert('Seed completed: ' + JSON.stringify(data.inserted));
+            // reload all lists and dashboard
+            loadBooks(); loadMembers(); loadLoans(); loadCopies(); loadBranches(); loadPublishers(); loadAuthors(); loadDashboard();
+        })
+        .catch(err => {
+            console.error('Seed error:', err);
+            alert('Seed request failed: ' + err);
+        });
+}
+window.addEventListener('load', () => {
+    loadBooks();
+    loadMembers();
+    loadLoans();
+    loadBranches();
+    loadPublishers();
+    loadAuthors();
+    loadCopies();
+    initCharts();
+    loadDashboard();
+});
+    </script>
+
+</body>
+</html>

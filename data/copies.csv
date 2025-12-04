@@ -1,0 +1,14 @@
+copy_id,isbn,branch_id,status
+1,1001,1,Available
+2,1001,2,Available
+3,1003,1,On Loan
+71,1772876318,2,Available
+72,1001,22,On Loan
+73,1003,1,Reserved
+74,1515768572,1,Available
+75,1573617972,23,On Loan
+76,1772876318,23,On Loan
+77,2116968271,22,Reserved
+78,1001,23,On Loan
+79,1237062392,22,Available
+80,1320481335,2,Available
